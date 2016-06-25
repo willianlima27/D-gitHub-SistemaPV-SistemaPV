@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	  xmlns:h="http://xmlns.jcp.org/jsf/html"
+	  xmlns:f="http://xmlns.jcp.org/jsf/core"
+	  xmlns:p="http://primefaces.org/ui"
+	  xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+<h:head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Fabricantes</title>
+</h:head>
+<h:body>
+
+	<!-- Importa o menu para apágina -->
+	<p:layoutUnit>
+		<ui:include src="/template/menu.xhtml"/>
+	</p:layoutUnit>
+	
+	<p:growl id="mensagem"/>
+
+	<!-- form - tag de formulário -->
+	<h:form id="formListagem">
+		
+		<!--  criação do painel e nome do cabeçalho -->
+		<p:panel header="Fabricantes - Listagem">
+			
+			<!--  criação da tabela que reberá dados doo bando de dados -->
+			<p:dataTable id="tabela" emptyMessage="Nenhum registro encontrado."
+				paginator="true" rows="10" value="#{fabricanteBean.fabricantes}" var="fabricante">
+				
+				<f:facet name="footer">
+					<p:commandButton value="Novo" oncomplete="PF('dialogo').show();"
+						actionListener="#{fabricanteBean.novo}" update=":formCadastro:painel" />
+				</f:facet>
+				
+				<!--  Definindo as colunas -->
+				<p:column headerText="Nome" sortBy="#{fabricante.descricao}" filterBy="#{fabricante.descricao}">
+					<h:outputText value="#{fabricante.descricao}" />
+				</p:column>
+			
+				<p:column headerText="Opções">
+					<p:commandButton icon="ui-icon-trash" actionListener="#{fabricanteBean.excluir}" update=":mensagem :formListagem:tabela">
+					<p:confirm header="Confirmação"	message = "Deseja Excluir o Fabricante?" icon="ui-icon-alert" />
+						<f:attribute name="fabricanteSelecionado" value="#{fabricante}"/>
+					</p:commandButton>
+					
+					<p:commandButton icon="ui-icon-pencil" actionListener="#{fabricanteBean.editar}" update=":formCadastro:painel" 
+					oncomplete="PF('dialogo').show();">
+						<f:attribute name="fabricanteSelecionado" value="#{fabricante}"/>
+					</p:commandButton>
+					
+				</p:column>
+			
+			</p:dataTable>
+			
+			<p:confirmDialog global="true">
+				<p:commandButton value="Sim" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="Não" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+		</p:panel>
+	</h:form>
+	
+	<!--  criando a tela de dialogo do botão novo -->
+	<!-- draggable - Não permite arrastar o componente -->
+	<!-- resizable - Não permite aumentar o componente -->
+	<!-- closable - Não permite fechar o componente -->
+	<!-- modal - Congela a tela do fundo -->
+	<p:dialog header="Fabricantes - Cadastro" widgetVar="dialogo" 
+		draggable="false" resizable="false" modal="true" closable="false">
+		
+		<h:form id="formCadastro">
+			<!-- define o numero de colunas do formulário -->
+			<h:panelGrid id="painel" columns="2">
+				<p:outputLabel for="nome" value="Nome:"/>
+				<p:inputText id="nome" maxlength="50" size="30" 
+					value="#{fabricanteBean.fabricante.descricao}" required="true" requiredMessage="Campo Obrigatório não preenchido"/>
+			</h:panelGrid>
+			
+			<h:panelGrid columns="2">
+				<p:commandButton value="Salvar"
+					actionListener="#{fabricanteBean.salvar}"
+					update=":mensagem :formCadastro:painel :formListagem:tabela" />
+				<p:commandButton value="Fechar" oncomplete="PF('dialogo').hide();"/>
+			</h:panelGrid>
+		</h:form>
+	</p:dialog>
+</h:body>
+</html>
