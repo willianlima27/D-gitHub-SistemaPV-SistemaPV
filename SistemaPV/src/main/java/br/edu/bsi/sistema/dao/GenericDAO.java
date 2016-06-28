@@ -92,6 +92,21 @@ public class GenericDAO<Entidade> {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
+	public Entidade buscarNome(String nome){
+		Session sessao = HibernateUtil.getFabricaDeSessoes().openSession();
+		try{
+			Criteria consulta = sessao.createCriteria(classe);
+			consulta.add(Restrictions.ilike("nome", nome));
+			Entidade resultado = (Entidade) consulta.uniqueResult();
+			return resultado;
+		} catch (RuntimeException erro){
+			throw erro;
+		} finally{
+			sessao.close();
+		}
+	}
+	
 	//Método de exclusão
 	@SuppressWarnings("unchecked")
 	public void excluir(Entidade entidade){
